@@ -1,4 +1,4 @@
-package org.cjohnson.superbackup;
+package org.cjohnson.superbackup.backup;
 
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.filefilter.IOFileFilter;
@@ -22,16 +22,21 @@ public class Backup {
   
   private List<File> allFiles;
   
-  public Backup(Date dateOfBackup, LinkedList<String> sourceBackupDirectoriesRawPaths, LinkedList<String> destinationBackupDirectoriesRawPaths) {
+  public Backup(Date dateOfBackup, LinkedList<String> sourceBackupDirectoriesRawPaths, String backupRelocationRelativeDirectory) {
     // Date of Initialization Could Potentially be Different
     // than Date of Execution.
     this.dateOfBackup = dateOfBackup;
     
     this.sourceBackupDirectoriesRawPaths = sourceBackupDirectoriesRawPaths;
-    this.destinationBackupDirectoriesRawPaths = destinationBackupDirectoriesRawPaths;
+    
+    // Take The Backup Relocation Relative Directory and modify all from source
+    this.destinationBackupDirectoriesRawPaths = new LinkedList<>();
+    for(String sourceBackupDirectoryRawPath : sourceBackupDirectoriesRawPaths) {
+      destinationBackupDirectoriesRawPaths.add(backupRelocationRelativeDirectory + sourceBackupDirectoryRawPath);
+    }
     
     // Convert String Raw Paths to File Objects for Copy
-    convertStringPathsToFileObjectsForCopy(sourceBackupDirectoriesRawPaths, destinationBackupDirectoriesRawPaths);
+    convertStringPathsToFileObjectsForCopy(sourceBackupDirectoriesRawPaths, (LinkedList<String>) destinationBackupDirectoriesRawPaths);
   
     // Get all subdirectory files that are being backed up
     // for logging reasons.
